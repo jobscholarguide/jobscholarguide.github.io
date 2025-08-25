@@ -1,0 +1,86 @@
+{
+  "id": "/",
+  "dir": "ltr",
+  "lang": "en",
+  "name": "JobScholarGuide",
+  "scope": "/",
+  "display": "standalone",
+  "start_url": "/",
+  "short_name": "JobScholarGuide",
+  "theme_color": "#FFFFFF",
+  "description": "JobScholarGuide is an online resource dedicated to publishing opportunities for scholarships, jobs, internships, and career growth. Our aim is to connect users with genuine, verified, and useful information.",
+  "orientation": "portrait",
+  "background_color": "#FFFFFF",
+  "prefer_related_applications": false,
+  "display_override": [
+    "window-controls-overlay"
+  ],
+  "screenshots": [
+    {
+      "src": "https://ekonet1.github.io/BookBlogArena/BookBlogArena%201.png"
+    },
+    {
+      "src": "https://ekonet1.github.io/BookBlogArena/BookBlogArena%202.png"
+    },
+    {
+      "src": "https://ekonet1.github.io/BookBlogArena/BookBlogArena%203.png"
+
+    }
+  ],
+  "features": [
+    "Cross Platform",
+    "low-latency inking",
+    "fast",
+    "useful AI"
+  ],
+  "icons": [
+    {
+      "src": "https://ekonet1.github.io/BookBlogArena/android-chrome-192x192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "https://ekonet1.github.io/BookBlogArena/android-chrome-192x192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "maskable"
+    },
+    {
+      "src": "https://ekonet1.github.io/BookBlogArena/android-chrome-512x512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "https://ekonet1.github.io/BookBlogArena/android-chrome-512x512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "maskable"
+    }
+  ],
+  "categories": [
+    "books",
+    "business",
+    "finance",
+    "news"
+  ],
+  "launch_handler": {
+    "client_mode": "navigate-existing"
+  },
+  "edge_side_panel": {},
+  "shortcuts": [
+    {
+      "name": "Start Live Session",
+      "short_name": "Start Live",
+      "description": "Jump direction into starting or joining a live session",
+      "url": "/?startLive",
+      "icons": [
+        {
+          "src": "https://ekonet1.github.io/BookBlogArena/android-chrome-256x256.png",
+          "sizes": "256x256"
+        }
+      ]
+    }
+  ]
+}
