@@ -35,35 +35,35 @@
   ],
   "icons": [
     {
-      "src": "https://ekonet1.github.io/BookBlogArena/android-chrome-192x192.png",
+      "src": "https://ekonet1.github.io/jobscholarguide/android-chrome-192x192.png",
       "sizes": "192x192",
       "type": "image/png",
       "purpose": "any"
     },
     {
-      "src": "https://ekonet1.github.io/BookBlogArena/android-chrome-192x192.png",
+      "src": "https://ekonet1.github.io/jobscholarguide/android-chrome-192x192.png",
       "sizes": "192x192",
       "type": "image/png",
       "purpose": "maskable"
     },
     {
-      "src": "https://ekonet1.github.io/BookBlogArena/android-chrome-512x512.png",
+      "src": "https://ekonet1.github.io/jobscholarguide/android-chrome-512x512.png",
       "sizes": "512x512",
       "type": "image/png",
       "purpose": "any"
     },
     {
-      "src": "https://ekonet1.github.io/BookBlogArena/android-chrome-512x512.png",
+      "src": "https://ekonet1.github.io/jobscholarguide/android-chrome-512x512.png",
       "sizes": "512x512",
       "type": "image/png",
       "purpose": "maskable"
     }
   ],
   "categories": [
-    "books",
-    "business",
-    "finance",
-    "news"
+    "job And Internship",
+    "Scholarship And Fellowship",
+    "Career Guide",
+    "Travel And Tourism"
   ],
   "launch_handler": {
     "client_mode": "navigate-existing"
