@@ -4,3 +4,4 @@ Finding real and timely opportunities online is often overwhelming. JobScholarGu
 https://jobscholarguide.blogspot.com/sitemap.xml
 https://jobscholarguide.blogspot.com/sitemap-pages.xml
 https://jobscholarguide.blogspot.com/2025/08/hilton-careers-dubai-uae-2025-urgent.html
+https://jobscholarguide.blogspot.com/robots.txt
