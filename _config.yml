@@ -1,14 +1,12 @@
-title: Your awesome title
-author: GitHub User
-email: your-email@domain.com
-description: > # this means to ignore newlines until "twitter_username:"
-  Write an awesome description for your new site here. You can edit this
-  line in _config.yml. It will appear in your document head meta (for
-  Google search results) and in your feed.xml site description.
+title: Fully Funded Scholarships & Jobs 2026-2027 | JobScholarGuide
+author: Ezeme Kingsley Onyebuchi
+url: "https://ekonet1.github.io/jobscholarguide"
+#email: your-email@domain.com
+description: Unlock global opportunities: scholarships, fellowships, internships, and jobs. Your roadmap to apply, qualify, and succeed in your career.
 
 # social links
-twitter_username: jekyllrb
-github_username:  jekyll
+#twitter_username: jekyllrb
+#github_username:  jekyll
 rss: rss
 # dribbble_username: jekyll
 # facebook_username: jekyll
@@ -43,5 +41,6 @@ minima:
 theme: minima
 
 plugins:
- - jekyll-feed
- - jekyll-seo-tag
+  - jekyll-feed
+  - jekyll-sitemap
+  - jekyll-seo-tag
