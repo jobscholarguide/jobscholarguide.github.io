@@ -1,0 +1,46 @@
+name: RSS to Jekyll Posts
+
+on:
+  schedule:
+    - cron: "0 */6 * * *"   # runs every 6 hours
+  workflow_dispatch:        # lets you trigger manually
+
+jobs:
+  update:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v3
+
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.x'
+
+      - name: Install feedparser
+        run: pip install feedparser
+
+      - name: Fetch Blogger RSS and convert to Jekyll posts
+        run: |
+          python - <<'EOF'
+          import feedparser, os, re, datetime
+          feed = feedparser.parse("https://jobscholarguide.blogspot.com/feeds/posts/default?alt=rss")
+          os.makedirs("_posts", exist_ok=True)
+
+          for entry in feed.entries:
+              # format file name
+              date = datetime.datetime(*entry.published_parsed[:6]).strftime("%Y-%m-%d")
+              slug = re.sub(r'[^a-z0-9]+', '-', entry.title.lower()).strip('-')
+              filename = f"_posts/{date}-{slug}.md"
+              if not os.path.exists(filename):
+                  with open(filename, "w", encoding="utf-8") as f:
+                      f.write(f"---\nlayout: post\ntitle: \"{entry.title}\"\ndate: {date}\n---\n\n{entry.link}\n")
+          EOF
+
+      - name: Commit and push
+        run: |
+          git config --global user.name "github-actions"
+          git config --global user.email "actions@github.com"
+          git add _posts
+          git commit -m "Update from Blogger RSS" || echo "No changes"
+          git push
