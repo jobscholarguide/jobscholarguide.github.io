@@ -17,13 +17,13 @@
   ],
   "screenshots": [
     {
-      "src": "https://ekonet1.github.io/jobscholarguide/About.png"
+      "src": "https://ekonet1.github.io/jobscholarguide.github.io/About.png"
     },
     {
-      "src": "https://ekonet1.github.io/jobscholarguide/Post.png"
+      "src": "https://ekonet1.github.io/jobscholarguide.github.io/Post.png"
     },
     {
-      "src": "https://ekonet1.github.io/jobscholarguide/Home.png"
+      "src": "https://ekonet1.github.io/jobscholarguide.github.io/Home.png"
 
     }
   ],
@@ -35,25 +35,25 @@
   ],
   "icons": [
     {
-      "src": "https://ekonet1.github.io/jobscholarguide/android-chrome-192x192.png",
+      "src": "https://ekonet1.github.io/jobscholarguide.github.io/android-chrome-192x192.png",
       "sizes": "192x192",
       "type": "image/png",
       "purpose": "any"
     },
     {
-      "src": "https://ekonet1.github.io/jobscholarguide/android-chrome-192x192.png",
+      "src": "https://ekonet1.github.io/jobscholarguide.github.io/android-chrome-192x192.png",
       "sizes": "192x192",
       "type": "image/png",
       "purpose": "maskable"
     },
     {
-      "src": "https://ekonet1.github.io/jobscholarguide/android-chrome-512x512.png",
+      "src": "https://ekonet1.github.io/jobscholarguide.github.io/android-chrome-512x512.png",
       "sizes": "512x512",
       "type": "image/png",
       "purpose": "any"
     },
     {
-      "src": "https://ekonet1.github.io/jobscholarguide/android-chrome-512x512.png",
+      "src": "https://ekonet1.github.io/jobscholarguide.github.io/android-chrome-512x512.png",
       "sizes": "512x512",
       "type": "image/png",
       "purpose": "maskable"
@@ -77,7 +77,7 @@
       "url": "/?startLive",
       "icons": [
         {
-          "src": "https://ekonet1.github.io/jobscholarguide/android-chrome-256x256.png",
+          "src": "https://ekonet1.github.io/jobscholarguide.github.io/android-chrome-256x256.png",
           "sizes": "256x256"
         }
       ]
