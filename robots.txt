@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://ekonet1.github.io/jobscholarguide/sitemap.xml
