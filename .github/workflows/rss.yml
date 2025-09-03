@@ -34,7 +34,7 @@ jobs:
               filename = f"_posts/{date}-{slug}.md"
               if not os.path.exists(filename):
                   with open(filename, "w", encoding="utf-8") as f:
-                      f.write(f"---\nlayout: post\ntitle: \"{entry.title}\"\ndate: {date}\n---\n\n{entry.link}\n")
+                      f.write(f"---\nlayout: post\ntitle: \"{entry.title}\"\ndate: {date}\ncanonical_url: {entry.link}\n---\n\nRead the full post here: {entry.link}\n")
           EOF
 
       - name: Commit and push
@@ -44,3 +44,5 @@ jobs:
           git add _posts
           git commit -m "Update from Blogger RSS" || echo "No changes"
           git push
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
