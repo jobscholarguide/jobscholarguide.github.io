@@ -11,6 +11,11 @@
   <meta name="keywords" content="{% if page.tags %}{{ page.tags | join: ', ' }}{% else %}{{ site.keywords }}{% endif %}">
   <link rel="canonical" href="{{ page.canonical_url | default: page.url | absolute_url }}">
 
+  <link href='https://ekonet1.github.io/jobscholarguide/apple-touch-icon.png' rel='apple-touch-icon' sizes='180x180'/>
+	<link href='https://ekonet1.github.io/jobscholarguide/favicon-32x32.png' rel='icon' sizes='32x32' type='image/png'/>
+	<link href='https://ekonet1.github.io/jobscholarguide/favicon-16x16.png' rel='icon' sizes='16x16' type='image/png'/>
+  <!--<link href='https://ekonet1.github.io/jobscholarguide/manifest.json' rel='manifest'/>   -->
+
   <!-- ✅ Open Graph -->
   <meta property="og:title" content="{{ page.title | escape }}">
   <meta property="og:description" content="{{ page.description | default: site.description }}">
