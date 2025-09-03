@@ -28,4 +28,32 @@
   {%- if jekyll.environment == 'production' and site.google_analytics -%}
     {%- include google-analytics.html -%}
   {%- endif -%}
+
+  <!-- ✅ JSON-LD Structured Data -->
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "BlogPosting",
+    "mainEntityOfPage": {
+      "@type": "WebPage",
+      "@id": "{{ page.canonical_url | default: page.url | absolute_url }}"
+    },
+    "headline": "{{ page.title | escape }}",
+    "description": "{{ page.description | default: site.description | escape }}",
+    "author": {
+      "@type": "Organization",
+      "name": "{{ site.title }}"
+    },
+    "publisher": {
+      "@type": "Organization",
+      "name": "{{ site.title }}",
+      "logo": {
+        "@type": "ImageObject",
+        "url": "{{ site.logo | default: '/assets/logo.png' | absolute_url }}"
+      }
+    },
+    "datePublished": "{{ page.date | date_to_xmlschema }}",
+    "dateModified": "{{ page.date | date_to_xmlschema }}"
+  }
+  </script>
 </head>
