@@ -23,7 +23,8 @@ jobs:
       - name: Fetch Blogger RSS and convert to Jekyll posts
         run: |
           python - <<'EOF'
-          import feedparser, os, re, datetime, re
+          import feedparser, os, re, datetime
+
           feed = feedparser.parse("https://jobscholarguide.blogspot.com/feeds/posts/default?alt=rss")
           os.makedirs("_posts", exist_ok=True)
 
@@ -34,18 +35,38 @@ jobs:
               filename = f"_posts/{date}-{slug}.md"
 
               if not os.path.exists(filename):
+                  # Summary / description
                   summary = entry.get("summary", "").replace("\n", " ").strip()
+
+                  # Tags
                   tags = [t.term for t in entry.get("tags", [])] if "tags" in entry else []
 
+                  # Try to get image
+                  image = ""
+                  if "media_thumbnail" in entry:
+                      image = entry.media_thumbnail[0]['url']
+                  elif "media_content" in entry:
+                      image = entry.media_content[0]['url']
+                  else:
+                      match = re.search(r'<img[^>]+src="([^">]+)"', entry.summary, re.IGNORECASE)
+                      if match:
+                          image = match.group(1)
+
+                  # Write Jekyll post
                   with open(filename, "w", encoding="utf-8") as f:
                       f.write("---\n")
                       f.write("layout: post\n")
                       f.write(f"title: \"{entry.title}\"\n")
                       f.write(f"date: {date}\n")
-                      f.write(f"description: \"{summary}\"\n")
-                      f.write(f"tags: {tags}\n")
+                      if summary:
+                          f.write(f"description: \"{summary}\"\n")
+                      if tags:
+                          f.write(f"tags: {tags}\n")
                       f.write(f"canonical_url: \"{entry.link}\"\n")
+                      if image:
+                          f.write(f"image: {image}\n")
                       f.write("---\n\n")
+                      f.write(f"{summary}\n\n")
                       f.write(f"👉 [Read full article here]({entry.link})\n")
           EOF
 
