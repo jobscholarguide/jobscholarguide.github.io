@@ -23,7 +23,7 @@ jobs:
       - name: Fetch Blogger RSS and convert to Jekyll posts
         run: |
           python - <<'EOF'
-          import feedparser, os, re, datetime
+          import feedparser, os, re, datetime, re
           feed = feedparser.parse("https://jobscholarguide.blogspot.com/feeds/posts/default?alt=rss")
           os.makedirs("_posts", exist_ok=True)
 
@@ -32,9 +32,21 @@ jobs:
               date = datetime.datetime(*entry.published_parsed[:6]).strftime("%Y-%m-%d")
               slug = re.sub(r'[^a-z0-9]+', '-', entry.title.lower()).strip('-')
               filename = f"_posts/{date}-{slug}.md"
+
               if not os.path.exists(filename):
+                  summary = entry.get("summary", "").replace("\n", " ").strip()
+                  tags = [t.term for t in entry.get("tags", [])] if "tags" in entry else []
+
                   with open(filename, "w", encoding="utf-8") as f:
-                      f.write(f"---\nlayout: post\ntitle: \"{entry.title}\"\ndate: {date}\ncanonical_url: {entry.link}\n---\n\nRead the full post here: {entry.link}\n")
+                      f.write("---\n")
+                      f.write("layout: post\n")
+                      f.write(f"title: \"{entry.title}\"\n")
+                      f.write(f"date: {date}\n")
+                      f.write(f"description: \"{summary}\"\n")
+                      f.write(f"tags: {tags}\n")
+                      f.write(f"canonical_url: \"{entry.link}\"\n")
+                      f.write("---\n\n")
+                      f.write(f"👉 [Read full article here]({entry.link})\n")
           EOF
 
       - name: Commit and push
