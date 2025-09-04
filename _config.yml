@@ -1,6 +1,8 @@
 title: "Fully Funded Scholarships & Jobs 2026-2027 | JobScholarGuide"
 author: "JobScholarGuide"
-url: "https://ekonet1.github.io/jobscholarguide"
+url: "https://ekonet1.github.io"   # ✅ Root domain only
+baseurl: "/jobscholarguide"        # ✅ Repository name
+
 description: "Unlock global opportunities: scholarships, fellowships, internships, and jobs. Your roadmap to apply, qualify, and succeed in your career."
 
 # Social links (uncomment if needed)
