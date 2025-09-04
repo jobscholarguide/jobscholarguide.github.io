@@ -1,15 +1,17 @@
 title: "Fully Funded Scholarships & Jobs 2026-2027 | JobScholarGuide"
 author: "JobScholarGuide"
-url: "https://ekonet1.github.io"   # ✅ Root domain only
-baseurl: "/jobscholarguide"        # ✅ Repository name
+
+# ✅ New root domain (no subpath anymore)
+url: "https://jobscholarguide.github.io"
+baseurl: ""   # leave empty because site is at root of org.github.io
 
 description: "Unlock global opportunities: scholarships, fellowships, internships, and jobs. Your roadmap to apply, qualify, and succeed in your career."
 
-# Social links (uncomment if needed)
-# twitter_username: jobscholarguide
-# facebook_username: jobscholarguide
-# linkedin_username: jobscholarguide
-# github_username: ekonet1
+# Social links
+twitter_username: jobscholarguide
+facebook_username: jobscholarguide
+linkedin_username: jobscholarguide
+github_username: jobscholarguide
 
 show_excerpts: true   # ✅ Show excerpts on homepage
 
@@ -27,13 +29,13 @@ excerpt_separator: "<!--more-->"
 theme: minima
 
 plugins:
-  - jekyll-feed
-  - jekyll-sitemap
-  - jekyll-seo-tag
+  - jekyll-feed      # ✅ Generates feed.xml
+  - jekyll-sitemap   # ✅ Generates sitemap.xml
+  - jekyll-seo-tag   # ✅ Better SEO metadata
 
 # Feed settings
 feed:
-  path: rss.xml
+  path: feed.xml     # ✅ Use standard feed.xml (not rss.xml)
 
 # Sitemap settings
 defaults:
