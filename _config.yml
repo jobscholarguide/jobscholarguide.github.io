@@ -1,9 +1,7 @@
 title: "Fully Funded Scholarships & Jobs 2026-2027 | JobScholarGuide"
 author: "JobScholarGuide"
-
-# ✅ Set Blogger as the main canonical site
-url: "https://jobscholarguide.blogspot.com"
-baseurl: ""   # No repo path since Blogger is the root
+url: "https://ekonet1.github.io"   # ✅ Root domain only
+baseurl: "/jobscholarguide"        # ✅ Repository name
 
 description: "Unlock global opportunities: scholarships, fellowships, internships, and jobs. Your roadmap to apply, qualify, and succeed in your career."
 
