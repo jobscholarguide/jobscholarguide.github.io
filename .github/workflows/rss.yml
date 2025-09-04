@@ -2,93 +2,95 @@ name: RSS to Jekyll Posts
 
 on:
   schedule:
-    - cron: "0 */6 * * *"  # runs every 6 hours
-  workflow_dispatch:       # allows manual trigger
+    - cron: "0 */6 * * *"   # runs every 6 hours
+  workflow_dispatch:        # allows manual trigger
 
 jobs:
   update:
     runs-on: ubuntu-latest
     steps:
-      # Step 1: Checkout the repository
       - name: Checkout repo
         uses: actions/checkout@v3
 
-      # Step 2: Set up Python
       - name: Set up Python
         uses: actions/setup-python@v4
         with:
           python-version: '3.x'
 
-      # Step 3: Install Python dependencies
       - name: Install dependencies
         run: pip install feedparser beautifulsoup4
 
-      # Step 4: Fetch Blogger RSS and convert to Jekyll posts
-      - name: Fetch Blogger RSS and generate posts
+      - name: Fetch Blogger RSS and convert to Jekyll posts
         run: |
           python - <<'EOF'
           import feedparser, os, re, datetime
           from bs4 import BeautifulSoup
 
-          # RSS feed from old Blogger site
           feed = feedparser.parse("https://jobscholarguide.blogspot.com/feeds/posts/default?alt=rss")
           os.makedirs("_posts", exist_ok=True)
 
           for entry in feed.entries:
+              # format file name
               date = datetime.datetime(*entry.published_parsed[:6]).strftime("%Y-%m-%d")
               slug = re.sub(r'[^a-z0-9]+', '-', entry.title.lower()).strip('-')
               filename = f"_posts/{date}-{slug}.md"
 
               if not os.path.exists(filename):
-                  # Extract and clean summary
+                  # --- Extract and clean summary ---
                   raw_summary = entry.get("summary", "").strip()
                   soup = BeautifulSoup(raw_summary, "html.parser")
                   clean_text = soup.get_text(" ", strip=True)
-                  summary = " ".join(clean_text.split()[:50]) + ("..." if len(clean_text.split()) > 50 else "")
 
+                  # First 50 words only
+                  words = clean_text.split()
+                  summary = " ".join(words[:50]) + ("..." if len(words) > 50 else "")
+
+                  # Tags if available
                   tags = [t.term for t in entry.get("tags", [])] if "tags" in entry else []
 
+                  # Featured image
                   image = None
                   if "media_thumbnail" in entry:
                       image = entry.media_thumbnail[0]['url']
                   elif "media_content" in entry:
                       image = entry.media_content[0]['url']
 
+                  # Escape YAML-breaking characters
                   title = entry.title.replace('"', "'")
 
                   with open(filename, "w", encoding="utf-8") as f:
+                      # --- Front matter ---
                       f.write("---\n")
                       f.write("layout: post\n")
                       f.write(f'title: "{title}"\n')
                       f.write(f"date: {date}\n")
                       f.write(f'description: "{summary}"\n')
                       f.write(f"tags: {tags}\n")
-                      # Set canonical URL to new GitHub Pages site
-                      f.write(f'canonical_url: "https://jobscholarguide.github.io/{date}-{slug}.html"\n')
+                      f.write(f'canonical_url: "{entry.link}"\n')
                       if image:
                           f.write(f'image: "{image}"\n')
                       f.write("---\n\n")
+
+                      # --- Body ---
                       f.write(f"{summary}\n\n")
                       f.write("<!--more-->\n\n")
                       f.write(f"👉 [Read the full article on JobScholarGuide]({entry.link})\n")
           EOF
 
-      # Step 5: Generate robots.txt for new GitHub Pages domain
-      - name: Generate robots.txt
+      - name: Generate robots.txt (always overwrite)
         run: |
           echo "User-agent: *" > robots.txt
           echo "Allow: /" >> robots.txt
           echo "" >> robots.txt
           echo "Sitemap: https://jobscholarguide.github.io/sitemap.xml" >> robots.txt
-          echo "Host: jobscholarguide.github.io" >> robots.txt
+          echo "Host: jobscholarguide.blogspot.com" >> robots.txt
 
-      # Step 6: Commit and push updates
-      - name: Commit and push changes
+      - name: Commit and push
         run: |
           git config --global user.name "github-actions"
           git config --global user.email "actions@github.com"
           git add _posts robots.txt
-          git commit -m "Update posts from Blogger RSS + regenerate robots.txt" || echo "No changes to commit"
+          git commit -m "Update from Blogger RSS + regenerate robots.txt" || echo "No changes"
           git push
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
