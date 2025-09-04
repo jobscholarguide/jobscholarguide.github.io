@@ -1,11 +1,5 @@
 User-agent: *
 Allow: /
 
-# GitHub Pages sitemap
 Sitemap: https://jobscholarguide.github.io/sitemap.xml
-
-# Optional: Blogger sitemap (if you want search engines to see the original posts)
-Sitemap: https://jobscholarguide.blogspot.com/sitemap.xml
-
-# Point to the canonical host for SEO credit
 Host: jobscholarguide.blogspot.com
