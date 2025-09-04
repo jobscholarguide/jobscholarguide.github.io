@@ -83,6 +83,8 @@ jobs:
           echo "Allow: /" >> robots.txt
           echo "" >> robots.txt
           echo "Sitemap: https://ekonet1.github.io/jobscholarguide/sitemap.xml" >> robots.txt
+          echo "Sitemap: https://jobscholarguide.blogspot.com/sitemap.xml" >> robots.txt
+          echo "Host: jobscholarguide.blogspot.com" >> robots.txt
 
       - name: Commit and push
         run: |
