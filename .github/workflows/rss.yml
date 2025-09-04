@@ -35,12 +35,22 @@ jobs:
               filename = f"_posts/{date}-{slug}.md"
 
               if not os.path.exists(filename):
+                  # Summary/excerpt
                   summary = entry.get("summary", "").replace("\n", " ").strip()
+                  summary = summary.replace('"', "'")  # escape quotes
+
+                  # Tags if available
                   tags = [t.term for t in entry.get("tags", [])] if "tags" in entry else []
+
+                  # Featured image if Blogger RSS provides one
+                  image = None
+                  if "media_thumbnail" in entry:
+                      image = entry.media_thumbnail[0]['url']
+                  elif "media_content" in entry:
+                      image = entry.media_content[0]['url']
 
                   # Escape YAML-breaking characters
                   title = entry.title.replace('"', "'")
-                  summary = summary.replace('"', "'")
 
                   with open(filename, "w", encoding="utf-8") as f:
                       f.write("---\n")
@@ -50,8 +60,17 @@ jobs:
                       f.write(f'description: "{summary}"\n')
                       f.write(f"tags: {tags}\n")
                       f.write(f'canonical_url: "{entry.link}"\n')
+                      if image:
+                          f.write(f'image: "{image}"\n')
                       f.write("---\n\n")
-                      f.write(f"👉 [Read full article here]({entry.link})\n")
+
+                      if image:
+                          f.write(f"![Featured Image]({image})\n\n")
+                      if summary:
+                          f.write(f"{summary}\n\n")
+
+                      # Custom styled button link with external icon
+                      f.write(f'<a href="{entry.link}" class="read-more-btn" target="_blank">👉 Read full article <span class="icon">🔗</span></a>\n')
           EOF
 
       - name: Commit and push
