@@ -48,7 +48,7 @@ jobs:
                   # Tags if available
                   tags = [t.term for t in entry.get("tags", [])] if "tags" in entry else []
 
-                  # Featured image (only in front matter, not shown in body)
+                  # Featured image
                   image = None
                   if "media_thumbnail" in entry:
                       image = entry.media_thumbnail[0]['url']
@@ -71,18 +71,25 @@ jobs:
                           f.write(f'image: "{image}"\n')
                       f.write("---\n\n")
 
-                      # --- Body (summary only for homepage excerpt) ---
+                      # --- Body ---
                       f.write(f"{summary}\n\n")
-                      f.write("<!--more-->\n\n")  # ✅ homepage will cut here
+                      f.write("<!--more-->\n\n")
                       f.write(f"👉 [Read the full article on JobScholarGuide]({entry.link})\n")
           EOF
+
+      - name: Generate robots.txt (always overwrite)
+        run: |
+          echo "User-agent: *" > robots.txt
+          echo "Allow: /" >> robots.txt
+          echo "" >> robots.txt
+          echo "Sitemap: https://ekonet1.github.io/jobscholarguide/sitemap.xml" >> robots.txt
 
       - name: Commit and push
         run: |
           git config --global user.name "github-actions"
           git config --global user.email "actions@github.com"
-          git add _posts
-          git commit -m "Update from Blogger RSS" || echo "No changes"
+          git add _posts robots.txt
+          git commit -m "Update from Blogger RSS + regenerate robots.txt" || echo "No changes"
           git push
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
