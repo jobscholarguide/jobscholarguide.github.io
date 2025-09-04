@@ -71,8 +71,9 @@ jobs:
                           f.write(f'image: "{image}"\n')
                       f.write("---\n\n")
 
-                      # --- Body (summary + external read more) ---
+                      # --- Body (summary only for homepage excerpt) ---
                       f.write(f"{summary}\n\n")
+                      f.write("<!--more-->\n\n")  # ✅ homepage will cut here
                       f.write(f"👉 [Read the full article on JobScholarGuide]({entry.link})\n")
           EOF
 
