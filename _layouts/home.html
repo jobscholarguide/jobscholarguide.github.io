@@ -21,9 +21,15 @@ layout: default
             {{ post.title | escape }}
           </a>
         </h3>
+
         {%- if site.show_excerpts -%}
-          {{ post.excerpt }}
+          {%- if post.image -%}
+            <img src="{{ post.image }}" alt="{{ post.title }}" style="max-width:100%; height:auto;" />
+          {%- endif -%}
+          {{ post.excerpt | markdownify }}
+          <p><a href="{{ post.url | relative_url }}">Read more →</a></p>
         {%- endif -%}
+
       </li>
       {%- endfor -%}
     </ul>
