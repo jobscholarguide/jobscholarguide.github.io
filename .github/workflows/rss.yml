@@ -64,12 +64,21 @@ jobs:
                           f.write(f'image: "{image}"\n')
                       f.write("---\n\n")
 
+                      # Featured image
                       if image:
                           f.write(f"![Featured Image]({image})\n\n")
 
-                      # Insert <!--more--> after first paragraph for clean excerpts
+                      # --- Excerpt handling ---
                       if summary:
-                          f.write(f"{summary}\n\n<!--more-->\n\n")
+                          # Use first sentence as excerpt
+                          sentences = summary.split(". ")
+                          first_sentence = sentences[0] + "." if sentences else summary
+                          f.write(f"{first_sentence}\n\n<!--more-->\n\n")
+
+                          # Add the rest of the summary AFTER the excerpt separator
+                          remaining = summary.replace(first_sentence, "").strip()
+                          if remaining:
+                              f.write(f"{remaining}\n\n")
 
                       f.write(f"👉 [Read full article here]({entry.link})\n")
           EOF
