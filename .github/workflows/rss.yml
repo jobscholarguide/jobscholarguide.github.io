@@ -71,8 +71,9 @@ jobs:
                           f.write(f'image: "{image}"\n')
                       f.write("---\n\n")
 
-                      # --- Body (summary only, no custom Read More) ---
-                      f.write(f"{summary}\n")
+                      # --- Body (summary + external read more) ---
+                      f.write(f"{summary}\n\n")
+                      f.write(f"👉 [Read the full article on JobScholarGuide]({entry.link})\n")
           EOF
 
       - name: Commit and push
