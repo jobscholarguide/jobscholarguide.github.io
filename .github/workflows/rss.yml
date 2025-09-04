@@ -66,11 +66,12 @@ jobs:
 
                       if image:
                           f.write(f"![Featured Image]({image})\n\n")
-                      if summary:
-                          f.write(f"{summary}\n\n")
 
-                      # Custom styled button link with external icon
-                      f.write(f'<a href="{entry.link}" class="read-more-btn" target="_blank">👉 Read full article <span class="icon">🔗</span></a>\n')
+                      # Insert <!--more--> after first paragraph for clean excerpts
+                      if summary:
+                          f.write(f"{summary}\n\n<!--more-->\n\n")
+
+                      f.write(f"👉 [Read full article here]({entry.link})\n")
           EOF
 
       - name: Commit and push
