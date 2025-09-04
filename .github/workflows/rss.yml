@@ -17,13 +17,14 @@ jobs:
         with:
           python-version: '3.x'
 
-      - name: Install feedparser
-        run: pip install feedparser
+      - name: Install dependencies
+        run: pip install feedparser beautifulsoup4
 
       - name: Fetch Blogger RSS and convert to Jekyll posts
         run: |
           python - <<'EOF'
           import feedparser, os, re, datetime
+          from bs4 import BeautifulSoup
 
           feed = feedparser.parse("https://jobscholarguide.blogspot.com/feeds/posts/default?alt=rss")
           os.makedirs("_posts", exist_ok=True)
@@ -35,14 +36,19 @@ jobs:
               filename = f"_posts/{date}-{slug}.md"
 
               if not os.path.exists(filename):
-                  # Summary/excerpt
-                  summary = entry.get("summary", "").replace("\n", " ").strip()
-                  summary = summary.replace('"', "'")  # escape quotes
+                  # --- Extract and clean summary ---
+                  raw_summary = entry.get("summary", "").strip()
+                  soup = BeautifulSoup(raw_summary, "html.parser")
+                  clean_text = soup.get_text(" ", strip=True)
+
+                  # First 50 words only
+                  words = clean_text.split()
+                  summary = " ".join(words[:50]) + ("..." if len(words) > 50 else "")
 
                   # Tags if available
                   tags = [t.term for t in entry.get("tags", [])] if "tags" in entry else []
 
-                  # Featured image if Blogger RSS provides one
+                  # Featured image (only in front matter, not shown in body)
                   image = None
                   if "media_thumbnail" in entry:
                       image = entry.media_thumbnail[0]['url']
@@ -53,6 +59,7 @@ jobs:
                   title = entry.title.replace('"', "'")
 
                   with open(filename, "w", encoding="utf-8") as f:
+                      # --- Front matter ---
                       f.write("---\n")
                       f.write("layout: post\n")
                       f.write(f'title: "{title}"\n')
@@ -64,12 +71,8 @@ jobs:
                           f.write(f'image: "{image}"\n')
                       f.write("---\n\n")
 
-                      if image:
-                          f.write(f"![Featured Image]({image})\n\n")
-
-                      # Insert <!--more--> after first paragraph for excerpts
-                      if summary:
-                          f.write(f"{summary}\n\n<!--more-->\n\n")
+                      # --- Body (summary only, no custom Read More) ---
+                      f.write(f"{summary}\n")
           EOF
 
       - name: Commit and push
