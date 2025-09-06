@@ -57,7 +57,7 @@ jobs:
                       "date": date,
                       "description": summary,
                       "tags": tags,
-                      "canonical_url": entry.link,   # ✅ Blogger canonical link
+                      "canonical_url": entry.link,
                   }
                   if image:
                       front_matter["image"] = image
@@ -71,7 +71,7 @@ jobs:
                       f.write(f"👉 [Read the full article on JobScholarGuide]({entry.link})\n")
           EOF
 
-      - name: Generate sitemap.xml (GitHub Pages URLs + priority + changefreq)
+      - name: Generate sitemap.xml
         run: |
           python - <<'EOF'
           import os, datetime, glob, re
@@ -87,7 +87,6 @@ jobs:
               url = f"{base_url}/{y}/{mth}/{d}/{slug}.html"
               lastmod = datetime.datetime.fromtimestamp(os.path.getmtime(file)).isoformat()
 
-              # priority rules
               post_date = datetime.datetime(int(y), int(mth), int(d))
               age_days = (datetime.datetime.utcnow() - post_date).days
               if age_days <= 7:
@@ -100,8 +99,6 @@ jobs:
               urls.append((url, lastmod, priority, changefreq))
 
           urls.append((f"{base_url}/", datetime.datetime.utcnow().isoformat(), "1.0", "daily"))
-          if os.path.exists("about.md") or os.path.exists("about/index.md"):
-              urls.append((f"{base_url}/about/", datetime.datetime.utcnow().isoformat(), "0.4", "yearly"))
 
           with open("sitemap.xml", "w", encoding="utf-8") as f:
               f.write('<?xml version="1.0" encoding="UTF-8"?>\n')
@@ -116,7 +113,7 @@ jobs:
               f.write("</urlset>\n")
           EOF
 
-      - name: Generate robots.txt (always overwrite)
+      - name: Generate robots.txt
         run: |
           echo "User-agent: *" > robots.txt
           echo "Allow: /" >> robots.txt
@@ -126,17 +123,50 @@ jobs:
 
       - name: Ping search engines
         run: |
-          echo "Pinging search engines..."
-          curl -s "http://www.google.com/ping?sitemap=https://jobscholarguide.github.io/sitemap.xml"
-          curl -s "http://www.bing.com/ping?sitemap=https://jobscholarguide.github.io/sitemap.xml"
-          curl -s --data "sitemap=https://jobscholarguide.github.io/sitemap.xml" https://pingomatic.com/ping/
+          ping_url() {
+            local url=$1
+            local name=$2
+            local attempt=1
+            local max_attempts=3
+            local resp=0
+
+            while [ $attempt -le $max_attempts ]; do
+              echo "📢 Pinging $name (attempt $attempt)..."
+              resp=$(curl -s -o /dev/null -w "%{http_code}" "$url")
+
+              if [ "$resp" -eq 200 ]; then
+                echo "✅ $name ping successful"
+                return 0
+              else
+                echo "❌ $name ping failed with status $resp"
+              fi
+
+              attempt=$((attempt+1))
+              sleep 5
+            done
+
+            echo "⚠️ $name ping failed after $max_attempts attempts"
+            return 1
+          }
+
+          # Major search engines
+          ping_url "http://www.google.com/ping?sitemap=https://jobscholarguide.github.io/sitemap.xml" "Google"
+          ping_url "http://www.bing.com/ping?sitemap=https://jobscholarguide.github.io/sitemap.xml" "Bing"
+          ping_url "http://webmaster.yandex.com/ping?sitemap=https://jobscholarguide.github.io/sitemap.xml" "Yandex"
+          ping_url "https://search.seznam.cz/indexnow?url=https://jobscholarguide.github.io/sitemap.xml" "Seznam"
+          ping_url "https://duckduckgo.com/indexnow?url=https://jobscholarguide.github.io/sitemap.xml" "DuckDuckGo (IndexNow)"
+
+          # Aggregator
+          curl -s -o /dev/null -w "%{http_code}" -X POST "https://pingomatic.com/ping/" \
+            --data "sitemap=https://jobscholarguide.github.io/sitemap.xml"
+          echo "📢 Pingomatic notified"
 
       - name: Commit and push
         run: |
           git config --global user.name "github-actions"
           git config --global user.email "actions@github.com"
           git add _posts robots.txt sitemap.xml
-          git commit -m "Update from Blogger RSS + regenerate sitemap.xml + robots.txt + ping search engines" || echo "No changes"
+          git commit -m "Update posts + regenerate sitemap/robots + notify search engines" || echo "No changes"
           git push
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
