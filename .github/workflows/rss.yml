@@ -65,7 +65,7 @@ jobs:
                       "date": date,
                       "description": summary,
                       "tags": tags,
-                      "canonical_url": entry.link,
+                      "canonical_url": entry.link,   # ✅ Blogger canonical link
                   }
                   if image:
                       front_matter["image"] = image
@@ -81,6 +81,41 @@ jobs:
                       f.write(f"👉 [Read the full article on JobScholarGuide]({entry.link})\n")
           EOF
 
+      - name: Generate sitemap.xml (use Blogger canonical URLs)
+        run: |
+          python - <<'EOF'
+          import os, datetime, glob, re
+
+          urls = []
+
+          # Collect all posts and use canonical_url from front matter
+          for file in glob.glob("_posts/*.md"):
+              canonical = None
+              with open(file, "r", encoding="utf-8") as f:
+                  for line in f:
+                      if line.strip().startswith("canonical_url:"):
+                          canonical = line.split(":", 1)[1].strip()
+                          break
+              if canonical:
+                  lastmod = datetime.datetime.fromtimestamp(os.path.getmtime(file)).isoformat()
+                  urls.append((canonical, lastmod))
+
+          # Add homepage + about page (Blogger versions)
+          urls.append(("https://jobscholarguide.blogspot.com/", datetime.datetime.utcnow().isoformat()))
+          urls.append(("https://jobscholarguide.blogspot.com/p/about.html", datetime.datetime.utcnow().isoformat()))
+
+          # Write sitemap.xml
+          with open("sitemap.xml", "w", encoding="utf-8") as f:
+              f.write('<?xml version="1.0" encoding="UTF-8"?>\n')
+              f.write('<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n')
+              for loc, lastmod in urls:
+                  f.write("  <url>\n")
+                  f.write(f"    <loc>{loc}</loc>\n")
+                  f.write(f"    <lastmod>{lastmod}</lastmod>\n")
+                  f.write("  </url>\n")
+              f.write("</urlset>\n")
+          EOF
+
       - name: Generate robots.txt (always overwrite)
         run: |
           echo "User-agent: *" > robots.txt
@@ -93,8 +128,8 @@ jobs:
         run: |
           git config --global user.name "github-actions"
           git config --global user.email "actions@github.com"
-          git add _posts robots.txt
-          git commit -m "Update from Blogger RSS + regenerate robots.txt" || echo "No changes"
+          git add _posts robots.txt sitemap.xml
+          git commit -m "Update from Blogger RSS + regenerate sitemap.xml + robots.txt" || echo "No changes"
           git push
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
