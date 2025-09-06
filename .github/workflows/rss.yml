@@ -1,29 +1,8 @@
-name: RSS to Jekyll Posts
-
-on:
-  schedule:
-    - cron: "0 */6 * * *"   # runs every 6 hours
-  workflow_dispatch:        # allows manual trigger
-
-jobs:
-  update:
-    runs-on: ubuntu-latest
-    steps:
-      - name: Checkout repo
-        uses: actions/checkout@v3
-
-      - name: Set up Python
-        uses: actions/setup-python@v4
-        with:
-          python-version: '3.x'
-
-      - name: Install dependencies
-        run: pip install feedparser beautifulsoup4
-
-      - name: Fetch Blogger RSS and convert to Jekyll posts
+- name: Fetch Blogger RSS and convert to Jekyll posts
         run: |
+          pip install pyyaml feedparser beautifulsoup4
           python - <<'EOF'
-          import feedparser, os, re, datetime
+          import feedparser, os, re, datetime, yaml
           from bs4 import BeautifulSoup
 
           feed = feedparser.parse("https://jobscholarguide.blogspot.com/feeds/posts/default?alt=rss")
@@ -55,20 +34,24 @@ jobs:
                   elif "media_content" in entry:
                       image = entry.media_content[0]['url']
 
-                  # Escape YAML-breaking characters
+                  # Escape title
                   title = entry.title.replace('"', "'")
 
+                  # Build front matter as dict
+                  front_matter = {
+                      "layout": "post",
+                      "title": title,
+                      "date": date,
+                      "description": summary,
+                      "tags": tags,
+                      "canonical_url": entry.link,
+                  }
+                  if image:
+                      front_matter["image"] = image
+
                   with open(filename, "w", encoding="utf-8") as f:
-                      # --- Front matter ---
                       f.write("---\n")
-                      f.write("layout: post\n")
-                      f.write(f'title: "{title}"\n')
-                      f.write(f"date: {date}\n")
-                      f.write(f'description: "{summary}"\n')
-                      f.write(f"tags: {tags}\n")
-                      f.write(f'canonical_url: "{entry.link}"\n')
-                      if image:
-                          f.write(f'image: "{image}"\n')
+                      yaml.dump(front_matter, f, allow_unicode=True, default_flow_style=False, sort_keys=False)
                       f.write("---\n\n")
 
                       # --- Body ---
@@ -76,21 +59,3 @@ jobs:
                       f.write("<!--more-->\n\n")
                       f.write(f"👉 [Read the full article on JobScholarGuide]({entry.link})\n")
           EOF
-
-      - name: Generate robots.txt (always overwrite)
-        run: |
-          echo "User-agent: *" > robots.txt
-          echo "Allow: /" >> robots.txt
-          echo "" >> robots.txt
-          echo "Sitemap: https://jobscholarguide.github.io/sitemap.xml" >> robots.txt
-          echo "Host: jobscholarguide.blogspot.com" >> robots.txt
-
-      - name: Commit and push
-        run: |
-          git config --global user.name "github-actions"
-          git config --global user.email "actions@github.com"
-          git add _posts robots.txt
-          git commit -m "Update from Blogger RSS + regenerate robots.txt" || echo "No changes"
-          git push
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
