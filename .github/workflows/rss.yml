@@ -30,35 +30,27 @@ jobs:
           os.makedirs("_posts", exist_ok=True)
 
           for entry in feed.entries:
-              # format file name
               date = datetime.datetime(*entry.published_parsed[:6]).strftime("%Y-%m-%d")
               slug = re.sub(r'[^a-z0-9]+', '-', entry.title.lower()).strip('-')
               filename = f"_posts/{date}-{slug}.md"
 
               if not os.path.exists(filename):
-                  # --- Extract and clean summary ---
                   raw_summary = entry.get("summary", "").strip()
                   soup = BeautifulSoup(raw_summary, "html.parser")
                   clean_text = soup.get_text(" ", strip=True)
-
-                  # First 50 words only
                   words = clean_text.split()
                   summary = " ".join(words[:50]) + ("..." if len(words) > 50 else "")
 
-                  # Tags if available
                   tags = [t.term for t in entry.get("tags", [])] if "tags" in entry else []
 
-                  # Featured image
                   image = None
                   if "media_thumbnail" in entry:
                       image = entry.media_thumbnail[0]['url']
                   elif "media_content" in entry:
                       image = entry.media_content[0]['url']
 
-                  # Escape title
                   title = entry.title.replace('"', "'")
 
-                  # Build front matter as dict
                   front_matter = {
                       "layout": "post",
                       "title": title,
@@ -74,44 +66,52 @@ jobs:
                       f.write("---\n")
                       yaml.dump(front_matter, f, allow_unicode=True, default_flow_style=False, sort_keys=False)
                       f.write("---\n\n")
-
-                      # --- Body ---
                       f.write(f"{summary}\n\n")
                       f.write("<!--more-->\n\n")
                       f.write(f"👉 [Read the full article on JobScholarGuide]({entry.link})\n")
           EOF
 
-      - name: Generate sitemap.xml (use Blogger canonical URLs)
+      - name: Generate sitemap.xml (GitHub Pages URLs + priority + changefreq)
         run: |
           python - <<'EOF'
           import os, datetime, glob, re
 
+          base_url = "https://jobscholarguide.github.io"
           urls = []
 
-          # Collect all posts and use canonical_url from front matter
           for file in glob.glob("_posts/*.md"):
-              canonical = None
-              with open(file, "r", encoding="utf-8") as f:
-                  for line in f:
-                      if line.strip().startswith("canonical_url:"):
-                          canonical = line.split(":", 1)[1].strip()
-                          break
-              if canonical:
-                  lastmod = datetime.datetime.fromtimestamp(os.path.getmtime(file)).isoformat()
-                  urls.append((canonical, lastmod))
+              m = re.match(r"_posts/(\d{4})-(\d{2})-(\d{2})-(.+)\.md", file)
+              if not m:
+                  continue
+              y, mth, d, slug = m.groups()
+              url = f"{base_url}/{y}/{mth}/{d}/{slug}.html"
+              lastmod = datetime.datetime.fromtimestamp(os.path.getmtime(file)).isoformat()
 
-          # Add homepage + about page (Blogger versions)
-          urls.append(("https://jobscholarguide.blogspot.com/", datetime.datetime.utcnow().isoformat()))
-          urls.append(("https://jobscholarguide.blogspot.com/p/about.html", datetime.datetime.utcnow().isoformat()))
+              # priority rules
+              post_date = datetime.datetime(int(y), int(mth), int(d))
+              age_days = (datetime.datetime.utcnow() - post_date).days
+              if age_days <= 7:
+                  priority, changefreq = "0.9", "daily"
+              elif age_days <= 180:
+                  priority, changefreq = "0.7", "weekly"
+              else:
+                  priority, changefreq = "0.5", "monthly"
 
-          # Write sitemap.xml
+              urls.append((url, lastmod, priority, changefreq))
+
+          urls.append((f"{base_url}/", datetime.datetime.utcnow().isoformat(), "1.0", "daily"))
+          if os.path.exists("about.md") or os.path.exists("about/index.md"):
+              urls.append((f"{base_url}/about/", datetime.datetime.utcnow().isoformat(), "0.4", "yearly"))
+
           with open("sitemap.xml", "w", encoding="utf-8") as f:
               f.write('<?xml version="1.0" encoding="UTF-8"?>\n')
               f.write('<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n')
-              for loc, lastmod in urls:
+              for loc, lastmod, priority, changefreq in urls:
                   f.write("  <url>\n")
                   f.write(f"    <loc>{loc}</loc>\n")
                   f.write(f"    <lastmod>{lastmod}</lastmod>\n")
+                  f.write(f"    <changefreq>{changefreq}</changefreq>\n")
+                  f.write(f"    <priority>{priority}</priority>\n")
                   f.write("  </url>\n")
               f.write("</urlset>\n")
           EOF
@@ -122,7 +122,7 @@ jobs:
           echo "Allow: /" >> robots.txt
           echo "" >> robots.txt
           echo "Sitemap: https://jobscholarguide.github.io/sitemap.xml" >> robots.txt
-          echo "Host: jobscholarguide.blogspot.com" >> robots.txt
+          echo "Host: jobscholarguide.github.io" >> robots.txt
 
       - name: Commit and push
         run: |
