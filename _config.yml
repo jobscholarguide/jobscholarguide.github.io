@@ -32,14 +32,16 @@ plugins:
   - jekyll-feed      # ✅ Generates feed.xml automatically
   - jekyll-sitemap   # ✅ Generates sitemap.xml automatically
   - jekyll-seo-tag   # ✅ Better SEO metadata
+  - jekyll-paginate  # ✅ Homepage pagination (better crawlability)
 
 # Feed settings
 feed:
   path: feed.xml     # ✅ Use standard feed.xml (Google recognizes this)
 
-# Sitemap settings
+# Sitemap + Canonical settings
 defaults:
   - scope:
       path: ""
     values:
       sitemap: true
+      canonical_url: "https://jobscholarguide.github.io"
