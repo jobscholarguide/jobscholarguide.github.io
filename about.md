@@ -34,7 +34,7 @@ Whether you are a student chasing scholarships, a graduate searching for your fi
 ---
 
 ## Stay Connected  
-👉 Bookmark our site: [JobScholarGuide](https://ekonet1.github.io/jobscholarguide/)  
+👉 Bookmark our site: [JobScholarGuide](https://jobscholarguide.blogspot.com/)  
 👉 Follow us on social media (coming soon)  
 👉 Subscribe for updates directly from our blog.  
 
