@@ -1,8 +1,5 @@
 User-agent: *
 Allow: /
 
-# ✅ Correct sitemap URL on GitHub Pages
 Sitemap: https://jobscholarguide.github.io/sitemap.xml
-
-# ✅ Declare GitHub Pages as the main host (fast indexing)
 Host: jobscholarguide.github.io
