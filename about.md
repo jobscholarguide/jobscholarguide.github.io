@@ -7,7 +7,7 @@ description: "Learn more about JobScholarGuide, your trusted source for global s
 
 # About JobScholarGuide  
 
-Welcome to **[JobScholarGuide](https://www.jobscholarguide.name.ng/p/about.html/)**, your global gateway to **scholarships, jobs, internships, and career growth opportunities**.  
+Welcome to **[JobScholarGuide](https://www.jobscholarguide.name.ng/p/about.html)**, your global gateway to **scholarships, jobs, internships, and career growth opportunities**.  
 
 Our mission is simple:  
 🎯 To make education and employment accessible to everyone, regardless of background, nationality, or financial status.  
