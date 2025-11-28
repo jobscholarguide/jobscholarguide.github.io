@@ -10,7 +10,7 @@ description: "Unlock global opportunities: scholarships, fellowships, internship
 # Social links (used by jekyll-seo-tag)
 twitter_username: jobscholarguide
 facebook_username: jobscholarguide
-#linkedin_username: jobscholarguide
+linkedin_username: jobscholarguide
 #github_username: jobscholarguide
 
 show_excerpts: true   # ✅ Show excerpts on homepage
