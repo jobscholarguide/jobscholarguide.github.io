@@ -26,7 +26,7 @@ jobs:
           import feedparser, os, re, datetime, yaml
           from bs4 import BeautifulSoup
 
-          feed = feedparser.parse("https://jobscholarguide.blogspot.com/feeds/posts/default?alt=rss")
+          feed = feedparser.parse("https://www.jobscholarguide.name.ng/feeds/posts/default?alt=rss")
           os.makedirs("_posts", exist_ok=True)
 
           for entry in feed.entries:
